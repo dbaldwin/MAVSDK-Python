@@ -430,3 +430,23 @@ class LogFiles(AsyncBase):
                 yield ProgressData.translate_from_rpc(response.progress)
         finally:
             download_log_file_stream.cancel()
+
+    async def erase_all_log_files(self):
+        """
+         Erase all log files.
+
+         Raises
+         ------
+         LogFilesError
+             If the request fails. The error contains the reason for the failure.
+        """
+
+        request = log_files_pb2.EraseAllLogFilesRequest()
+        response = await self._stub.EraseAllLogFiles(request)
+
+        
+        result = self._extract_result(response)
+
+        if result.result != LogFilesResult.Result.SUCCESS:
+            raise LogFilesError(result, "erase_all_log_files()")
+        

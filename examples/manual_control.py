@@ -3,11 +3,13 @@
 """
 This example shows how to use the manual controls plugin.
 
-Note: Manual inputs are taken from a test set in this example to decrease complexity. Manual inputs
-can be received from devices such as a joystick using third-party python extensions
+Note: Manual inputs are taken from a test set in this example to decrease
+complexity. Manual inputs can be received from devices such as a joystick
+using third-party python extensions.
 
-Note: Taking off the drone is not necessary before enabling manual inputs. It is acceptable to send
-positive throttle input to leave the ground. Takeoff is used in this example to decrease complexity
+Note: Taking off the drone is not necessary before enabling manual inputs.
+It is acceptable to send positive throttle input to leave the ground.
+Takeoff is used in this example to decrease complexity
 """
 
 import asyncio
@@ -35,15 +37,16 @@ async def manual_controls():
     await drone.connect(system_address="udp://:14540")
 
     # This waits till a mavlink based drone is connected
+    print("Waiting for drone to connect...")
     async for state in drone.core.connection_state():
         if state.is_connected:
             print(f"-- Connected to drone!")
             break
 
     # Checking if Global Position Estimate is ok
-    async for global_lock in drone.telemetry.health():
-        if global_lock.is_global_position_ok:
-            print("-- Global position state is ok")
+    async for health in drone.telemetry.health():
+        if health.is_global_position_ok and health.is_home_position_ok:
+            print("-- Global position state is good enough for flying.")
             break
 
     # set the manual control input after arming
@@ -79,17 +82,18 @@ async def manual_controls():
         roll = float(input_list[0])
         # get current state of pitch axis (between -1 and 1)
         pitch = float(input_list[1])
-        # get current state of throttle axis (between -1 and 1, but between 0 and 1 is expected)
+        # get current state of throttle axis
+        # (between -1 and 1, but between 0 and 1 is expected)
         throttle = float(input_list[2])
         # get current state of yaw axis (between -1 and 1)
         yaw = float(input_list[3])
 
-        await drone.manual_control.set_manual_control_input(roll, pitch, throttle, yaw)
+        await drone.manual_control.set_manual_control_input(
+            pitch, roll, throttle, yaw)
 
         await asyncio.sleep(0.1)
 
 
 if __name__ == "__main__":
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(manual_controls())
+    # Run the asyncio loop
+    asyncio.run(run())

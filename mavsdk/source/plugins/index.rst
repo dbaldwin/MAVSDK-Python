@@ -2,12 +2,16 @@ Plugins
 =======
 
 .. toctree::
-   :maxdepth: 5
+   :titlesonly:
 
    action
+   action_server
    calibration
    camera
    core
+   component_information
+   component_information_server
+   failure
    follow_me
    ftp
    geofence
@@ -17,17 +21,17 @@ Plugins
    manual_control
    mission
    mission_raw
+   mission_raw_server
    mocap
    offboard
    param
+   param_server
+   server_utility
    shell
    telemetry
-   tune
-   failure
-   tracking_server
-   server_utility
-   transponder
-   param_server
    telemetry_server
-   action_server
-   mission_raw_server
+   tracking_server
+   transponder
+   tune
+   camera_server
+   rtk

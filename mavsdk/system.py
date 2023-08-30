@@ -6,8 +6,12 @@ import threading
 from .async_plugin_manager import AsyncPluginManager
 
 from . import action
+from . import action_server
 from . import calibration
 from . import camera
+from . import camera_server
+from . import component_information
+from . import component_information_server
 from . import core
 from . import failure
 from . import follow_me
@@ -19,11 +23,16 @@ from . import log_files
 from . import manual_control
 from . import mission
 from . import mission_raw
+from . import mission_raw_server
 from . import mocap
 from . import offboard
 from . import param
+from . import param_server
+from . import rtk
+from . import server_utility
 from . import shell
 from . import telemetry
+from . import telemetry_server
 from . import tracking_server
 from . import transponder
 from . import tune
@@ -120,8 +129,12 @@ class System:
 
         self._plugins = {}
         self._plugins["action"] = action.Action(plugin_manager)
+        self._plugins["action_server"] = action_server.ActionServer(plugin_manager)
         self._plugins["calibration"] = calibration.Calibration(plugin_manager)
         self._plugins["camera"] = camera.Camera(plugin_manager)
+        self._plugins["camera_server"] = camera_server.CameraServer(plugin_manager)
+        self._plugins["component_information"] = component_information.ComponentInformation(plugin_manager)
+        self._plugins["component_information_server"] = component_information_server.ComponentInformationServer(plugin_manager)
         self._plugins["core"] = core.Core(plugin_manager)
         self._plugins["failure"] = failure.Failure(plugin_manager)
         self._plugins["follow_me"] = follow_me.FollowMe(plugin_manager)
@@ -133,18 +146,23 @@ class System:
         self._plugins["manual_control"] = manual_control.ManualControl(plugin_manager)
         self._plugins["mission"] = mission.Mission(plugin_manager)
         self._plugins["mission_raw"] = mission_raw.MissionRaw(plugin_manager)
+        self._plugins["mission_raw_server"] = mission_raw_server.MissionRawServer(plugin_manager)
         self._plugins["mocap"] = mocap.Mocap(plugin_manager)
         self._plugins["offboard"] = offboard.Offboard(plugin_manager)
         self._plugins["param"] = param.Param(plugin_manager)
+        self._plugins["param_server"] = param_server.ParamServer(plugin_manager)
+        self._plugins["rtk"] = rtk.Rtk(plugin_manager)
+        self._plugins["server_utility"] = server_utility.ServerUtility(plugin_manager)
         self._plugins["shell"] = shell.Shell(plugin_manager)
         self._plugins["telemetry"] = telemetry.Telemetry(plugin_manager)
+        self._plugins["telemetry_server"] = telemetry_server.TelemetryServer(plugin_manager)
         self._plugins["tracking_server"] = tracking_server.TrackingServer(plugin_manager)
         self._plugins["transponder"] = transponder.Transponder(plugin_manager)
         self._plugins["tune"] = tune.Tune(plugin_manager)
 
     @staticmethod
     def error_uninitialized(plugin_name: str) -> str:
-        return "{plugin_name} plugin has not been initialized!" \
+        return "{plugin_name} plugin has not been initialized! " \
             "Did you run `System.connect()`?"
 
     @property
@@ -152,6 +170,12 @@ class System:
         if "action" not in self._plugins:
             raise RuntimeError(self.error_uninitialized("Action"))
         return self._plugins["action"]
+
+    @property
+    def action_server(self) -> action_server.ActionServer:
+        if "action_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("ActionServer"))
+        return self._plugins["action_server"]
 
     @property
     def calibration(self) -> calibration.Calibration:
@@ -164,6 +188,24 @@ class System:
         if "camera" not in self._plugins:
             raise RuntimeError(self.error_uninitialized("Camera"))
         return self._plugins["camera"]
+
+    @property
+    def camera_server(self) -> camera_server.CameraServer:
+        if "camera_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("CameraServer"))
+        return self._plugins["camera_server"]
+
+    @property
+    def component_information(self) -> component_information.ComponentInformation:
+        if "component_information" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("ComponentInformation"))
+        return self._plugins["component_information"]
+
+    @property
+    def component_information_server(self) -> component_information_server.ComponentInformationServer:
+        if "component_information_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("ComponentInformationServer"))
+        return self._plugins["component_information_server"]
 
     @property
     def core(self) -> core.Core:
@@ -232,6 +274,12 @@ class System:
         return self._plugins["mission_raw"]
 
     @property
+    def mission_raw_server(self) -> mission_raw_server.MissionRawServer:
+        if "mission_raw_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("MissionRawServer"))
+        return self._plugins["mission_raw_server"]
+
+    @property
     def mocap(self) -> mocap.Mocap:
         if "mocap" not in self._plugins:
             raise RuntimeError(self.error_uninitialized("Mocap"))
@@ -250,6 +298,24 @@ class System:
         return self._plugins["param"]
 
     @property
+    def param_server(self) -> param_server.ParamServer:
+        if "param_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("ParamServer"))
+        return self._plugins["param_server"]
+
+    @property
+    def rtk(self) -> rtk.Rtk:
+        if "rtk" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("Rtk"))
+        return self._plugins["rtk"]
+
+    @property
+    def server_utility(self) -> server_utility.ServerUtility:
+        if "server_utility" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("ServerUtility"))
+        return self._plugins["server_utility"]
+
+    @property
     def shell(self) -> shell.Shell:
         if "shell" not in self._plugins:
             raise RuntimeError(self.error_uninitialized("Shell"))
@@ -260,6 +326,12 @@ class System:
         if "telemetry" not in self._plugins:
             raise RuntimeError(self.error_uninitialized("Telemetry"))
         return self._plugins["telemetry"]
+
+    @property
+    def telemetry_server(self) -> telemetry_server.TelemetryServer:
+        if "telemetry_server" not in self._plugins:
+            raise RuntimeError(self.error_uninitialized("TelemetryServer"))
+        return self._plugins["telemetry_server"]
 
     @property
     def tracking_server(self) -> tracking_server.TrackingServer:
@@ -296,7 +368,12 @@ class System:
             from importlib_resources import path
 
         try:
-            with path(bin, 'mavsdk_server') as backend:
+            if sys.platform.startswith('win'):
+                mavsdk_exec_name = "mavsdk_server.exe"
+            else:
+                mavsdk_exec_name = "mavsdk_server"
+
+            with path(bin, mavsdk_exec_name) as backend:
                 bin_path_and_args = [os.fspath(backend),
                                      "-p", str(port),
                                      "--sysid", str(sysid),

@@ -11,6 +11,9 @@ async def run():
     asyncio.ensure_future(print_is_armed(drone))
     asyncio.ensure_future(print_is_in_air(drone))
 
+    while True:
+        await asyncio.sleep(1)
+
 
 async def print_is_armed(drone):
     async for is_armed in drone.telemetry.armed():
@@ -24,7 +27,4 @@ async def print_is_in_air(drone):
 
 if __name__ == "__main__":
     # Start the main function
-    asyncio.ensure_future(run())
-
-    # Runs the event loop until the program is canceled with e.g. CTRL-C
-    asyncio.get_event_loop().run_forever()
+    asyncio.run(print_flight_mode())

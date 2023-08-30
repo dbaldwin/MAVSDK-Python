@@ -9,7 +9,7 @@ The Python wrapper is based on a gRPC client communicating with the gRPC server 
 
 ## Important Notes
 
-- Python 3.6+ is required (because the wrapper is based on [asyncio](https://docs.python.org/3.7/library/asyncio.html)).
+- Python 3.7+ is required (because the wrapper is based on [asyncio](https://docs.python.org/3.7/library/asyncio.html)).
 - You may need to run `pip3` instead of `pip` and `python3` instead of `python`, depending of your system defaults.
 - Auterion has a [Getting started with MAVSDK-Python](https://auterion.com/getting-started-with-mavsdk-python/) guide if you're a beginner and not sure where to start.
 
@@ -101,7 +101,7 @@ export MAVSDK_SERVER_ARCH=<ARM embedded architecture>
 ```
 Supported architectures: `armv6l`, `armv7l` and `aarch64`. For example for Raspberry Pi it is `armv7l`, or `aarch64` (if a 64 bit distribution is used).
 
-Then you can install a development (editable) version of the package using:
+Then you can install a development version of the package, which links the package to the generated code in this local directory. To do so, use:
 ```
 python3 setup.py build
 pip3 install -e .

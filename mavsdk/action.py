@@ -124,6 +124,9 @@ class ActionResult:
          PARAMETER_ERROR
               Error getting or setting parameter
 
+         UNSUPPORTED
+              Action not supported
+
          """
 
         
@@ -139,6 +142,7 @@ class ActionResult:
         VTOL_TRANSITION_SUPPORT_UNKNOWN = 9
         NO_VTOL_TRANSITION_SUPPORT = 10
         PARAMETER_ERROR = 11
+        UNSUPPORTED = 12
 
         def translate_to_rpc(self):
             if self == ActionResult.Result.UNKNOWN:
@@ -165,6 +169,8 @@ class ActionResult:
                 return action_pb2.ActionResult.RESULT_NO_VTOL_TRANSITION_SUPPORT
             if self == ActionResult.Result.PARAMETER_ERROR:
                 return action_pb2.ActionResult.RESULT_PARAMETER_ERROR
+            if self == ActionResult.Result.UNSUPPORTED:
+                return action_pb2.ActionResult.RESULT_UNSUPPORTED
 
         @staticmethod
         def translate_from_rpc(rpc_enum_value):
@@ -193,6 +199,8 @@ class ActionResult:
                 return ActionResult.Result.NO_VTOL_TRANSITION_SUPPORT
             if rpc_enum_value == action_pb2.ActionResult.RESULT_PARAMETER_ERROR:
                 return ActionResult.Result.PARAMETER_ERROR
+            if rpc_enum_value == action_pb2.ActionResult.RESULT_UNSUPPORTED:
+                return ActionResult.Result.UNSUPPORTED
 
         def __str__(self):
             return self.name
@@ -855,4 +863,33 @@ class Action(AsyncBase):
 
         if result.result != ActionResult.Result.SUCCESS:
             raise ActionError(result, "set_return_to_launch_altitude()", relative_altitude_m)
+        
+
+    async def set_current_speed(self, speed_m_s):
+        """
+         Set current speed.
+
+         This will set the speed during a mission, reposition, and similar.
+         It is ephemeral, so not stored on the drone and does not survive a reboot.
+
+         Parameters
+         ----------
+         speed_m_s : float
+              Speed in meters/second
+
+         Raises
+         ------
+         ActionError
+             If the request fails. The error contains the reason for the failure.
+        """
+
+        request = action_pb2.SetCurrentSpeedRequest()
+        request.speed_m_s = speed_m_s
+        response = await self._stub.SetCurrentSpeed(request)
+
+        
+        result = self._extract_result(response)
+
+        if result.result != ActionResult.Result.SUCCESS:
+            raise ActionError(result, "set_current_speed()", speed_m_s)
         

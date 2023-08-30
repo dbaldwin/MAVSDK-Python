@@ -12,7 +12,7 @@ async def run():
     print("Waiting for drone to connect...")
     async for state in drone.core.connection_state():
         if state.is_connected:
-            print(f"Drone discovered")
+            print(f"-- Connected to drone!")
             break
 
     entries = await get_entries(drone)
@@ -42,4 +42,5 @@ async def get_entries(drone):
 
 
 if __name__ == "__main__":
-    asyncio.get_event_loop().run_until_complete(run())
+    # Run the asyncio loop
+    asyncio.run(run())
